@@ -1,0 +1,17 @@
+html, body {
+    height: 100%;
+    overflow: hidden
+}
+
+#mopCanvas {
+    z-index: 1;
+}
+
+#controls {
+    color: whitesmoke;
+    padding: 8px;
+    position: absolute;
+    width: 50%;
+    background: rgba(0,0,0,0.4);
+    z-index: 10;
+}
