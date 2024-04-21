@@ -1,36 +1,68 @@
-let unitArr = []
+let arrowArr = []
+let plusArr = []
+let hexArr = []
+
+let xQty = 5
+let yQty = 3
+let squareMatrix = []
+
+for(var i = 0; i < yQty; i++){
+    let boardXStat = []
+    for(var j = 0; j < xQty; j++){
+        let obj = {
+            coord: {x:j, y:i},
+            influenced: false,
+            slot_a_occupied: false,
+            slot_b_occupied: false,
+            slot_c_occupied: false,
+            slot_d_occupied: false
+        }
+        boardXStat.push(obj)
+    }
+    squareMatrix.push(boardXStat)
+}
+
+console.log(squareMatrix)
 
 window.addEventListener("DOMContentLoaded", function() {
     let canvas = document.getElementById('mopCanvas')
     canvas.focus()
     let engine = new BABYLON.Engine(canvas, true)
 
-    let repositionToZero = (obj) => {
-        obj.scaling = new BABYLON.Vector3(-0.1, 0.1, 0.1)
-        obj.rotation.x = BABYLON.Tools.ToRadians(90)
-        obj.rotation.z = BABYLON.Tools.ToRadians(180)
-        obj.position.y += 10
+    let removeFromStage = (obj) => {
+        obj.position.x = -200
+    }
+
+    let moveToSquare = (unit, coordStart, coordEnd) => {
+
     }
 
     function createScene() {
         let scene = new BABYLON.Scene(engine)
 
-        let duplicateUnit = (unit) => {
-            for (var i = 0; i < 50; i++) {
+        let duplicateUnit = (unit, qty) => {
+            for (var i = 0; i < qty; i++) {
                 var duplicatedMesh = unit.clone()
                 duplicatedMesh.name = "unit_" + i
             
-                // Adjust the position, rotation, or scale of each duplicated mesh if needed
-                // For example, you can randomly position the duplicated meshes
-                duplicatedMesh.position.x = Math.random() * 10 - 5 // Example: Random position between -5 and 5 along the x-axis
-                // duplicatedMesh.position.y = Math.random() * 10 - 5 // Example: Random position between -5 and 5 along the y-axis
-                // duplicatedMesh.position.z = Math.random() * 10 - 5 // Example: Random position between -5 and 5 along the z-axis
-            
-                unitArr.push(duplicatedMesh)
+                duplicatedMesh.position.x = -1000 // Example: Random position between -5 and 5 along the x-axis
+                
+                switch(unit.name) {
+                    case 'arrow':
+                        arrowArr.push(duplicatedMesh)
+                      break
+                    case 'hex':
+                      hexArr.push(duplicatedMesh)
+                      break
+                    case 'plus':
+                      plusArr.push(duplicatedMesh)
+                      break
+                    default:
+                      console.log('unrecognizes unit.name in duplicateUnit() function\nunit.name: ' + unit.name)
+                  }
                 // Add each duplicated mesh to the scene
                 scene.addMesh(duplicatedMesh)
             }
-            console.log(unitArr)
         }
 
         scene.createDefaultEnvironment({
@@ -41,14 +73,18 @@ window.addEventListener("DOMContentLoaded", function() {
         scene.clearColor = new BABYLON.Color3(0.494, 0.698, 0.882)
 
         var camera = new BABYLON.ArcRotateCamera("arcCamera", Math.PI / 2, Math.PI / 2, 5, BABYLON.Vector3.Zero(), scene)
+        // back up camera
         camera.radius += 38
+        // pan left
+        camera.target.x = -35
+        camera.target.y = -15
         camera.attachControl(canvas, true)
 
         let glassPBR = new BABYLON.PBRMaterial("glassPBR", scene);
         glassPBR.baseColor = new BABYLON.Color3(0.5, 0.3, 0.1); // Light gray base color
-        glassPBR.metallic = 0; // Non-metallic material
+        glassPBR.metallic = .5; // Non-metallic material
         glassPBR.roughness = 0.2; // Slightly rough surface
-        glassPBR.alpha = 0.4; // Partially transparent
+        glassPBR.alpha = 0.5; // Partially transparent
         glassPBR.indexOfRefraction = 1.5; // Refraction index of glass (typical value)
         glassPBR.directIntensity = 0.5; // Intensity of direct lighting
         glassPBR.environmentIntensity = 0.5; // Intensity of environment (reflection) lighting
@@ -57,79 +93,84 @@ window.addEventListener("DOMContentLoaded", function() {
 
         BABYLON.SceneLoader.ImportMeshAsync('arrow', '../assets/models/', 'arrow.obj').then((result)=>{
             let arrow = result.meshes[0]
-            arrow.scaling = new BABYLON.Vector3(1, 1, 1)
-            // arrow.rotation.x = BABYLON.Tools.ToRadians(90)
-            // arrow.rotation.z = BABYLON.Tools.ToRadians(180)
-            arrow.position.x += 10
+            arrow.scaling = new BABYLON.Vector3(.8, .8, .8)
+            arrow.rotation.z = BABYLON.Tools.ToRadians(270)
+            arrow.position.x = 0
+            arrow.position.y = 0
             arrow.material = glassPBR
-            // duplicateUnit(arrow)
-            // camera.setTarget(arrow)
+            removeFromStage(arrow)
+            duplicateUnit(arrow, 60)
         })
 
         BABYLON.SceneLoader.ImportMeshAsync('hex', '../assets/models/', 'hex.obj').then((result)=>{
             let hex = result.meshes[0]
+            hex.scaling = new BABYLON.Vector3(.8, .8, .8)
+            hex.rotation.z = BABYLON.Tools.ToRadians(90)
+            hex.position.x = 0
+            hex.position.y = 0
             hex.material = glassPBR
+            removeFromStage(hex)
+            duplicateUnit(hex, 60)
+        })
+
+        BABYLON.SceneLoader.ImportMeshAsync('plus', '../assets/models/', 'plus.obj').then((result)=>{
+            let plus = result.meshes[0]
+            plus.scaling = new BABYLON.Vector3(.8, .8, .8)
+            plus.position.x = 0
+            plus.position.y = 0
+            plus.material = glassPBR
+            removeFromStage(plus)
+            duplicateUnit(plus, 60)
         })
 
         let groundPBR = new BABYLON.PBRMaterial("groundPBR", scene)
         groundPBR.albedoTexture = new BABYLON.Texture('../assets/textures/black-plastic/color.jpg', scene)
-        groundPBR.albedoTexture.uScale = 1.2
+        groundPBR.albedoTexture.uScale = 1
         groundPBR.albedoTexture.vScale = .6
         groundPBR.albedoTexture.level = 1.5
         groundPBR.microSurfaceTexture = new BABYLON.Texture('../assets/textures/black-plastic/roughness.jpg', scene)
-        groundPBR.microSurfaceTexture.uScale = 1.2
+        groundPBR.microSurfaceTexture.uScale = 1
         groundPBR.microSurfaceTexture.vScale = .6
         groundPBR.bumpTexture = new BABYLON.Texture('../assets/textures/black-plastic/normal.png', scene)
-        groundPBR.bumpTexture.uScale = 1.2
+        groundPBR.bumpTexture.uScale = 1
         groundPBR.bumpTexture.vScale = .6
         groundPBR.roughness = 1
 
-        let ground = BABYLON.MeshBuilder.CreateBox("ground", {width: 60, height: 30}, scene)
+        let basePBR = new BABYLON.PBRMaterial("basePBR", scene)
+        basePBR.albedoTexture = new BABYLON.Texture('../assets/textures/black-plastic/color.jpg', scene)
+        basePBR.albedoTexture.uScale = .2
+        basePBR.albedoTexture.vScale = .2
+        basePBR.albedoTexture.level = 1.5
+        basePBR.microSurfaceTexture = new BABYLON.Texture('../assets/textures/black-plastic/roughness.jpg', scene)
+        basePBR.microSurfaceTexture.uScale = .2
+        basePBR.microSurfaceTexture.vScale = .2
+        basePBR.bumpTexture = new BABYLON.Texture('../assets/textures/black-plastic/normal.png', scene)
+        basePBR.bumpTexture.uScale = .2
+        basePBR.bumpTexture.vScale = .2
+        basePBR.roughness = 1
+
+        let ground = BABYLON.MeshBuilder.CreateBox("ground", {width: 50, height: 30}, scene)
         ground.material = groundPBR
-        ground.position.z -= .5
+        ground.position.x = -35
+        ground.position.y += -15
+        ground.position.z = -.5
+
+        let baseLeft = BABYLON.MeshBuilder.CreateBox("baseLeft", {width: 10, height: 30}, scene)
+        baseLeft.material = basePBR
+        baseLeft.position.x = -5
+        baseLeft.position.y += -15
+        baseLeft.position.z = -.5
+
+        let baseRight = BABYLON.MeshBuilder.CreateBox("baseRight", {width: 10, height: 30}, scene)
+        baseRight.material = basePBR
+        baseRight.position.x = -65
+        baseRight.position.y += -15
+        baseRight.position.z = -.5
 
         return scene
     }
 
     let scene = createScene()
-
-    let animateUnits = () => {
-        unitArr.forEach(unit => {
-            unit.position.z -= Math.floor(Math.random() * 5) + 1
-        })
-    }
-
-    let moveUnitsLeft = () => {
-        unitArr.forEach(unit => {
-            unit.position.z -= 1
-        })
-    }
-
-    let moveUnitsRight = () => {
-        unitArr.forEach(unit => {
-            unit.position.z += 1
-        })
-    }
-
-    scene.onKeyboardObservable.add((kbInfo) => {
-        switch (kbInfo.type) {
-          case BABYLON.KeyboardEventTypes.KEYDOWN:
-            if(kbInfo.event.key == ' '){
-                animateUnits()
-            }
-            if(kbInfo.event.key == 'a'){
-                moveUnitsLeft()
-            }
-            if(kbInfo.event.key == 'd'){
-                moveUnitsRight()
-            }
-            console.log("KEY DOWN: ", kbInfo.event.key)
-            break
-          case BABYLON.KeyboardEventTypes.KEYUP:
-            console.log("KEY UP: ", kbInfo.event.code)
-            break
-        }
-      })
 
     engine.runRenderLoop(function(){
         scene.render()
