@@ -241,19 +241,6 @@ window.addEventListener("DOMContentLoaded", function() {
         baseRight.position.y += -15
         baseRight.position.z = -.5
 
-        let baseUnitBgMaterial = new BABYLON.PBRMaterial("baseUnitBgMaterial", scene)
-        baseUnitBgMaterial.albedoTexture = new BABYLON.Texture('../assets/textures/paper/color.jpg', scene)
-        baseUnitBgMaterial.albedoTexture.uScale = .2
-        baseUnitBgMaterial.albedoTexture.vScale = .2
-        // baseUnitBgMaterial.albedoTexture.level = 0.7
-        baseUnitBgMaterial.microSurfaceTexture = new BABYLON.Texture('../assets/textures/paper/roughness.jpg', scene)
-        baseUnitBgMaterial.microSurfaceTexture.uScale = .2
-        baseUnitBgMaterial.microSurfaceTexture.vScale = .2
-        baseUnitBgMaterial.bumpTexture = new BABYLON.Texture('../assets/textures/paper/normal.png', scene)
-        baseUnitBgMaterial.bumpTexture.uScale = .2
-        baseUnitBgMaterial.bumpTexture.vScale = .2
-        baseUnitBgMaterial.roughness = 1
-
         // setup unit backgrounds
         BABYLON.SceneLoader.ImportMeshAsync('arrow-holder', '../assets/models/', 'arrow-holder.obj').then((result)=>{
             let arrowHolder = result.meshes[0]
