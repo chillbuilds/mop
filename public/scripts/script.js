@@ -33,19 +33,16 @@ window.addEventListener("DOMContentLoaded", function() {
             console.log(unitArr)
         }
 
-        // scene.createDefaultEnvironment({
-        //     environmentTexture: '../assets/env/environment.env',
-        //     createSkybox: false,
-        // })
+        scene.createDefaultEnvironment({
+            environmentTexture: '../assets/env/environment.env',
+            createSkybox: false,
+        })
 
         scene.clearColor = new BABYLON.Color3(0.494, 0.698, 0.882)
 
-        let camera = new BABYLON.ArcRotateCamera("arcCamera1",
-            BABYLON.Tools.ToRadians(0),
-            BABYLON.Tools.ToRadians(0),
-            20.0, new BABYLON.Vector3(0, 20, -25), scene)
-        
-        // camera.attachControl(canvas, true)
+        var camera = new BABYLON.ArcRotateCamera("arcCamera", Math.PI / 2, Math.PI / 2, 5, BABYLON.Vector3.Zero(), scene)
+        camera.radius += 38
+        camera.attachControl(canvas, true)
 
         let glassPBR = new BABYLON.PBRMaterial("glassPBR", scene);
         glassPBR.baseColor = new BABYLON.Color3(0.5, 0.3, 0.1); // Light gray base color
@@ -60,33 +57,36 @@ window.addEventListener("DOMContentLoaded", function() {
 
         BABYLON.SceneLoader.ImportMeshAsync('arrow', '../assets/models/', 'arrow.obj').then((result)=>{
             let arrow = result.meshes[0]
-            arrow.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5)
-            arrow.rotation.x = BABYLON.Tools.ToRadians(90)
-            arrow.rotation.z = BABYLON.Tools.ToRadians(180)
-            arrow.position.y += 10
+            arrow.scaling = new BABYLON.Vector3(1, 1, 1)
+            // arrow.rotation.x = BABYLON.Tools.ToRadians(90)
+            // arrow.rotation.z = BABYLON.Tools.ToRadians(180)
+            arrow.position.x += 10
             arrow.material = glassPBR
-            duplicateUnit(arrow)
+            // duplicateUnit(arrow)
+            // camera.setTarget(arrow)
         })
 
-        // let tablePBR = new BABYLON.PBRMaterial("woodMaterial", scene)
-        // tablePBR.albedoTexture = new BABYLON.Texture('../assets/textures/wood/color.jpg', scene)
-        // tablePBR.albedoTexture.uScale = .1
-        // tablePBR.albedoTexture.vScale = .1
-        // tablePBR.albedoTexture.level = 1.5
-        // tablePBR.microSurfaceTexture = new BABYLON.Texture('../assets/textures/wood/roughness.jpg', scene)
-        // tablePBR.microSurfaceTexture.uScale = .1
-        // tablePBR.microSurfaceTexture.vScale = .1
-        // tablePBR.bumpTexture = new BABYLON.Texture('../assets/textures/wood/normal.png', scene)
-        // tablePBR.bumpTexture.uScale = .1
-        // tablePBR.bumpTexture.vScale = .1
-        // tablePBR.roughness = 0.9
-        // tablePBR.metallic = 0.0
+        BABYLON.SceneLoader.ImportMeshAsync('hex', '../assets/models/', 'hex.obj').then((result)=>{
+            let hex = result.meshes[0]
+            hex.material = glassPBR
+        })
 
-        // BABYLON.SceneLoader.ImportMeshAsync('table', '../assets/models/', 'table.obj').then((result)=>{
-        //     let table = result.meshes[0]
-        //     repositionToZero(table)
-        //     table.material = tablePBR
-        // })
+        let groundPBR = new BABYLON.PBRMaterial("groundPBR", scene)
+        groundPBR.albedoTexture = new BABYLON.Texture('../assets/textures/black-plastic/color.jpg', scene)
+        groundPBR.albedoTexture.uScale = 1.2
+        groundPBR.albedoTexture.vScale = .6
+        groundPBR.albedoTexture.level = 1.5
+        groundPBR.microSurfaceTexture = new BABYLON.Texture('../assets/textures/black-plastic/roughness.jpg', scene)
+        groundPBR.microSurfaceTexture.uScale = 1.2
+        groundPBR.microSurfaceTexture.vScale = .6
+        groundPBR.bumpTexture = new BABYLON.Texture('../assets/textures/black-plastic/normal.png', scene)
+        groundPBR.bumpTexture.uScale = 1.2
+        groundPBR.bumpTexture.vScale = .6
+        groundPBR.roughness = 1
+
+        let ground = BABYLON.MeshBuilder.CreateBox("ground", {width: 60, height: 30}, scene)
+        ground.material = groundPBR
+        ground.position.z -= .5
 
         return scene
     }
