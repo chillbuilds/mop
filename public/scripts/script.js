@@ -248,14 +248,14 @@ window.addEventListener("DOMContentLoaded", function() {
             arrowHolder.rotation.z = BABYLON.Tools.ToRadians(90)
             arrowHolder.position.x = -5
             arrowHolder.position.y = -5
-            arrowHolder.material = baseUnitBgMaterial
+            arrowHolder.material = glassPBR
         })
         BABYLON.SceneLoader.ImportMeshAsync('plus-holder', '../assets/models/', 'plus-holder.obj').then((result)=>{
             let plusHolder = result.meshes[0]
             plusHolder.scaling = new BABYLON.Vector3(.8, .8, .8)
             plusHolder.position.x = -5
             plusHolder.position.y = -15
-            plusHolder.material = baseUnitBgMaterial
+            plusHolder.material = glassPBR
         })
         BABYLON.SceneLoader.ImportMeshAsync('hex-holder', '../assets/models/', 'hex-holder.obj').then((result)=>{
             let hexHolder = result.meshes[0]
@@ -263,7 +263,7 @@ window.addEventListener("DOMContentLoaded", function() {
             hexHolder.rotation.z = BABYLON.Tools.ToRadians(90)
             hexHolder.position.x = -5
             hexHolder.position.y = -25
-            hexHolder.material = baseUnitBgMaterial
+            hexHolder.material = glassPBR
         })
 
         return scene
