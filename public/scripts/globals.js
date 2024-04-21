@@ -12,6 +12,40 @@ let yQty = 3
 let squareMatrix = []
 let playerBase = {arrowQty: 4, plusQty: 2, hexQty: 2}
 
+let fontData;
+
+let updateText = (unit, text) => {
+    if(arrowQtyText){
+        arrowQtyText.dispose()
+    }
+    if(unit == 'arrowQtyText'){
+        arrowQtyText = BABYLON.MeshBuilder.CreateText("textMesh", text, fontData, {
+            size: 16,
+            resolution: 64,
+            depth: .5,
+            faceUV: [
+                new BABYLON.Vector4(0, 0, 1, 1),
+                new BABYLON.Vector4(0, 0, 1, 1),
+                new BABYLON.Vector4(0, 0, 1, 1),
+            ]
+        })
+        arrowQtyText.scaling.x = -1
+    }
+}
+
+fetch('../assets/font-data/josefin-sans-bold.json')
+    .then(response => response.json())
+    .then(data => {
+        fontData = data
+        updateText('arrowQtyText','poo')
+        setTimeout(()=>{updateText('arrowQtyText','pee')}, 2000)
+        setTimeout(()=>{updateText('arrowQtyText','butt')}, 4000)
+        setTimeout(()=>{updateText('arrowQtyText','balls')}, 6000)
+    })
+    .catch(error => {
+        console.error('Error fetching JSON:', error);
+    })
+
 let playerBaseSetup = () => {
     let arrowUnits = []
     let plusUnits = []       
